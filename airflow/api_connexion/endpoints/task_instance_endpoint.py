@@ -282,6 +282,16 @@ def _apply_range_filter(query: Query, key: ClauseElement, value_range: tuple[T, 
         query = query.filter(key <= lte_value)
     return query
 
+def _apply_int_filter(query: Query, key: ClauseElement, value_range: tuple[T, T]) -> Query:
+    # error is
+    # TypeError: '>' not supported between instances of 'property' and 'int'
+    gte_value, lte_value = value_range
+    if gte_value is not None:
+        query = query.filter(key >= gte_value)
+    if lte_value is not None:
+        query = query.filter(key <= lte_value)
+    return query
+
 
 @format_parameters(
     {
@@ -411,6 +421,7 @@ def get_task_instances_batch(session: Session = NEW_SESSION) -> APIResponse:
     base_query = _apply_array_filter(base_query, key=TI.state, values=states)
     base_query = _apply_array_filter(base_query, key=TI.pool, values=data["pool"])
     base_query = _apply_array_filter(base_query, key=TI.queue, values=data["queue"])
+    base_query = _apply_int_filter(base_query, key=TI._try_number, values=data["try_number"])
 
     # Count elements before joining extra columns
     total_entries = base_query.with_entities(func.count("*")).scalar()
