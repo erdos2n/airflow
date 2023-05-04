@@ -2221,9 +2221,8 @@ scheduler:
       default: "5.0"
     scheduler_health_check_threshold:
       description: |
-        If the last scheduler heartbeat happened more than scheduler_health_check_threshold
-        ago (in seconds), scheduler is considered unhealthy.
-        This is used by the health check in the "/health" endpoint
+        The length of time, in seconds, the scheduler has to complete a heartbeat before it is considered unhealthy.
+        Should be less than ```job_heartbeat_sec```.
       version_added: 1.10.2
       type: string
       example: ~
